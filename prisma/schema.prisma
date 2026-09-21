@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum AssetKind {
+  IMAGE
+  VIDEO
+  AUDIO
+}
+
+enum AssetSource {
+  UPLOAD
+  GENERATED
+  REFERENCE
+}
+
+enum LifeEventType {
+  SHOPPING
+  DINING
+  EVENT
+  TRAVEL
+  WORK
+  HOBBY
+  RELATIONSHIP
+  OTHER
+}
+
+enum LifeEventStatus {
+  PLANNED
+  HAPPENING
+  DONE
+}
+
+enum ContentStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  FAILED
+}
+
+enum SocialPlatform {
+  X
+  XIAOHONGSHU
+  TIKTOK
+  BILIBILI
+  YOUTUBE
+  TWITCH
+}
+
+enum ConnectorStatus {
+  LIVE
+  STUB
+}
+
+enum VideoProjectStatus {
+  DRAFT
+  COMPOSING
+  READY
+  FAILED
+}
+
+enum StreamSessionStatus {
+  PLANNED
+  LIVE
+  ENDED
+}
+
+model Entity {
+  id                    String   @id @default(cuid())
+  slug                  String   @unique
+  name                  String
+  bio                   String   @default("")
+  personality           String   @default("")
+  canonicalDescription  String   @default("")
+  faceNotes             String   @default("")
+  bodyNotes             String   @default("")
+  wardrobePalette       String   @default("")
+  styleDo               String   @default("")
+  styleDont             String   @default("")
+  locale                String   @default("en-US")
+  timezone              String   @default("UTC")
+  languages             String   @default("en")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  assets          Asset[]
+  events          LifeEvent[]
+  accounts        SocialAccount[]
+  contentItems    ContentItem[]
+  videoProjects   VideoProject[]
+  streamSessions  StreamSession[]
+}
+
+model Asset {
+  id            String      @id @default(cuid())
+  entityId      String
+  entity        Entity      @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  kind          AssetKind   @default(IMAGE)
+  source        AssetSource @default(UPLOAD)
+  filename      String
+  mimeType      String
+  storageKey    String
+  storageDriver String      @default("local")
+  publicUrl     String?
+  width         Int?
+  height        Int?
+  tags          String      @default("")
+  scene         String?
+  outfit        String?
+  emotion       String?
+  canonical     Boolean     @default(false)
+  prompt        String?
+  model         String?
+  createdAt     DateTime    @default(now())
+
+  contentItems ContentItem[]
+}
+
+model LifeEvent {
+  id          String          @id @default(cuid())
+  entityId    String
+  entity      Entity          @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  type        LifeEventType   @default(OTHER)
+  title       String
+  description String          @default("")
+  location    String          @default("")
+  startsAt    DateTime
+  endsAt      DateTime?
+  mood        String          @default("")
+  companions  String          @default("")
+  status      LifeEventStatus @default(PLANNED)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  contentItems ContentItem[]
+}
+
+model SocialAccount {
+  id        String          @id @default(cuid())
+  entityId  String
+  entity    Entity          @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  platform  SocialPlatform
+  handle    String          @default("")
+  status    ConnectorStatus @default(STUB)
+  notes     String          @default("")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([entityId, platform])
+}
+
+model ContentItem {
+  id            String        @id @default(cuid())
+  entityId      String
+  entity        Entity        @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  eventId       String?
+  event         LifeEvent?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  assetId       String?
+  asset         Asset?        @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  caption       String        @default("")
+  imagePrompt   String        @default("")
+  platforms     String        @default("X")
+  status        ContentStatus @default(DRAFT)
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+  error         String?
+  platformLog   String        @default("[]")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model VideoProject {
+  id          String             @id @default(cuid())
+  entityId    String
+  entity      Entity             @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  title       String
+  description String             @default("")
+  assetIds    String             @default("")
+  status      VideoProjectStatus @default(DRAFT)
+  outputKey   String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model StreamSession {
+  id          String              @id @default(cuid())
+  entityId    String
+  entity      Entity              @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  title       String
+  platform    SocialPlatform      @default(YOUTUBE)
+  status      StreamSessionStatus @default(PLANNED)
+  startsAt    DateTime?
+  notes       String              @default("")
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
