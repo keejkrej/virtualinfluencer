@@ -30,8 +30,8 @@ export default async function HomePage() {
     <AppShell
       title="Entities"
       actions={
-        <Button size="sm" asChild>
-          <Link href="/entities/new">New entity</Link>
+        <Button size="sm" nativeButton={false} render={<Link href="/entities/new" />}>
+          New entity
         </Button>
       }
     >
@@ -45,8 +45,8 @@ export default async function HomePage() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button asChild>
-              <Link href="/entities/new">Create entity</Link>
+            <Button nativeButton={false} render={<Link href="/entities/new" />}>
+              Create entity
             </Button>
           </EmptyContent>
         </Empty>

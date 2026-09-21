@@ -48,6 +48,13 @@ import {
 } from "@/components/ui/select";
 import { DEFAULT_IMAGE_MODEL, DEFAULT_TEXT_MODEL } from "@/lib/constants";
 
+const aspectItems = [
+  { label: "1:1", value: "1:1" },
+  { label: "4:5", value: "4:5" },
+  { label: "16:9", value: "16:9" },
+  { label: "9:16", value: "9:16" },
+];
+
 const suggestions = [
   "Generate a still of her testing glazes in north-window light",
   "Draft a caption from the next planned life event",
@@ -242,15 +249,16 @@ export function GenerateStudio({
             onChange={(event) => setScene(event.target.value)}
             placeholder="North-window studio, oat sweater, rust clip…"
           />
-          <Select defaultValue="1:1">
+          <Select defaultValue="1:1" items={aspectItems}>
             <SelectTrigger>
               <SelectValue placeholder="Aspect" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1:1">1:1</SelectItem>
-              <SelectItem value="4:5">4:5</SelectItem>
-              <SelectItem value="16:9">16:9</SelectItem>
-              <SelectItem value="9:16">9:16</SelectItem>
+              {aspectItems.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Button onClick={generateDirect} disabled={pendingImage || !openRouterConfigured}>

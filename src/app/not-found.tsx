@@ -18,8 +18,8 @@ export default function NotFound() {
           <EmptyDescription>That entity or route does not exist.</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button asChild>
-            <Link href="/">Back to entities</Link>
+          <Button nativeButton={false} render={<Link href="/" />}>
+            Back to entities
           </Button>
         </EmptyContent>
       </Empty>

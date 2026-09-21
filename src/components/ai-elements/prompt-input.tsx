@@ -59,6 +59,7 @@ import type {
   FormEventHandler,
   HTMLAttributes,
   KeyboardEventHandler,
+  MouseEvent,
   PropsWithChildren,
   ReactNode,
   RefObject,
@@ -421,7 +422,7 @@ export const PromptInputActionAddAttachments = ({
   const attachments = usePromptInputAttachments();
 
   const handleSelect = useCallback(
-    (e: Event) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       attachments.openFileDialog();
     },
@@ -429,7 +430,7 @@ export const PromptInputActionAddAttachments = ({
   );
 
   return (
-    <DropdownMenuItem {...props} onSelect={handleSelect}>
+    <DropdownMenuItem {...props} closeOnClick={false} onClick={handleSelect}>
       <ImageIcon className="mr-2 size-4" /> {label}
     </DropdownMenuItem>
   );
@@ -439,6 +440,7 @@ export type PromptInputActionAddScreenshotProps = ComponentProps<
   typeof DropdownMenuItem
 > & {
   label?: string;
+  onSelect?: (event: MouseEvent) => void;
 };
 
 export const PromptInputActionAddScreenshot = ({
@@ -449,7 +451,7 @@ export const PromptInputActionAddScreenshot = ({
   const attachments = usePromptInputAttachments();
 
   const handleSelect = useCallback(
-    async (event: Event) => {
+    async (event: MouseEvent) => {
       onSelect?.(event);
       if (event.defaultPrevented) {
         return;
@@ -474,7 +476,7 @@ export const PromptInputActionAddScreenshot = ({
   );
 
   return (
-    <DropdownMenuItem {...props} onSelect={handleSelect}>
+    <DropdownMenuItem {...props} closeOnClick={false} onClick={handleSelect}>
       <Monitor className="mr-2 size-4" />
       {label}
     </DropdownMenuItem>
@@ -1155,7 +1157,7 @@ export const PromptInputButton = ({
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipTrigger render={button} />
       <TooltipContent side={side}>
         {tooltipContent}
         {shortcut && (
@@ -1178,10 +1180,8 @@ export const PromptInputActionMenuTrigger = ({
   children,
   ...props
 }: PromptInputActionMenuTriggerProps) => (
-  <DropdownMenuTrigger asChild>
-    <PromptInputButton className={className} {...props}>
-      {children ?? <PlusIcon className="size-4" />}
-    </PromptInputButton>
+  <DropdownMenuTrigger render={<PromptInputButton className={className} {...props} />}>
+    {children ?? <PlusIcon className="size-4" />}
   </DropdownMenuTrigger>
 );
 
@@ -1315,14 +1315,26 @@ export const PromptInputSelectValue = ({
   <SelectValue className={cn(className)} {...props} />
 );
 
-export type PromptInputHoverCardProps = ComponentProps<typeof HoverCard>;
+export type PromptInputHoverCardProps = ComponentProps<typeof HoverCard> & {
+  openDelay?: number;
+  closeDelay?: number;
+};
+
+const PromptInputHoverCardDelayContext = createContext({
+  delay: 0,
+  closeDelay: 0,
+});
 
 export const PromptInputHoverCard = ({
   openDelay = 0,
   closeDelay = 0,
   ...props
 }: PromptInputHoverCardProps) => (
-  <HoverCard closeDelay={closeDelay} openDelay={openDelay} {...props} />
+  <PromptInputHoverCardDelayContext.Provider
+    value={{ delay: openDelay, closeDelay }}
+  >
+    <HoverCard {...props} />
+  </PromptInputHoverCardDelayContext.Provider>
 );
 
 export type PromptInputHoverCardTriggerProps = ComponentProps<
@@ -1331,7 +1343,10 @@ export type PromptInputHoverCardTriggerProps = ComponentProps<
 
 export const PromptInputHoverCardTrigger = (
   props: PromptInputHoverCardTriggerProps
-) => <HoverCardTrigger {...props} />;
+) => {
+  const { delay, closeDelay } = useContext(PromptInputHoverCardDelayContext);
+  return <HoverCardTrigger delay={delay} closeDelay={closeDelay} {...props} />;
+};
 
 export type PromptInputHoverCardContentProps = ComponentProps<
   typeof HoverCardContent

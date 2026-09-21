@@ -19,7 +19,7 @@ npm run dev
 ## Conventions
 
 - Next.js App Router, TypeScript, server actions for mutations.
-- UI: **shadcn/ui Lyra** (`radix-lyra`) + **AI Elements**. Do not add a custom palette, gradients, or one-off component skins.
+- UI: **shadcn/ui Lyra** (`base-lyra`, Base UI primitives) + **AI Elements**. Do not add a custom palette, gradients, or one-off component skins.
 - Generation goes through the Vercel AI SDK and OpenRouter. Do not call provider SDKs directly.
 - Secrets only in `.env.local` / Vercel env — never in the database or client bundle.
 

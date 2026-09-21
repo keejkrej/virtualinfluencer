@@ -23,8 +23,14 @@ export function EntityNav({ entityId }: { entityId: string }) {
         const href = tab.slug ? `${base}/${tab.slug}` : base;
         const active = tab.slug === "" ? pathname === base : pathname.startsWith(href);
         return (
-          <Button key={href} variant={active ? "secondary" : "ghost"} size="sm" asChild>
-            <Link href={href}>{tab.label}</Link>
+          <Button
+            key={href}
+            variant={active ? "secondary" : "ghost"}
+            size="sm"
+            nativeButton={false}
+            render={<Link href={href} />}
+          >
+            {tab.label}
           </Button>
         );
       })}

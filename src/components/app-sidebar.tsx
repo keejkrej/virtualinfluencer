@@ -59,21 +59,17 @@ export function AppSidebar({
                         ? pathname === "/"
                         : pathname.startsWith(link.href)
                     }
-                    asChild
+                    render={<Link href={link.href} />}
                   >
-                    <Link href={link.href}>
-                      <link.icon />
-                      <span>{link.label}</span>
-                    </Link>
+                    <link.icon />
+                    <span>{link.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/entities/new">
-                    <PlusIcon />
-                    <span>New entity</span>
-                  </Link>
+                <SidebarMenuButton render={<Link href="/entities/new" />}>
+                  <PlusIcon />
+                  <span>New entity</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -88,9 +84,9 @@ export function AppSidebar({
                   <SidebarMenuItem key={entity.id}>
                     <SidebarMenuButton
                       isActive={pathname.startsWith(`/entities/${entity.id}`)}
-                      asChild
+                      render={<Link href={`/entities/${entity.id}`} />}
                     >
-                      <Link href={`/entities/${entity.id}`}>{entity.name}</Link>
+                      {entity.name}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

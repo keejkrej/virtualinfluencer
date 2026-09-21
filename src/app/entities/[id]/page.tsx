@@ -90,8 +90,13 @@ export default async function EntityOverviewPage({
                 <span className="text-sm">
                   {index + 1}. {step.label}
                 </span>
-                <Button size="xs" variant={step.ok ? "secondary" : "outline"} asChild>
-                  <Link href={step.href}>{step.ok ? "Done" : "Next"}</Link>
+                <Button
+                  size="xs"
+                  variant={step.ok ? "secondary" : "outline"}
+                  nativeButton={false}
+                  render={<Link href={step.href} />}
+                >
+                  {step.ok ? "Done" : "Next"}
                 </Button>
               </div>
             ))}
@@ -112,8 +117,11 @@ export default async function EntityOverviewPage({
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button asChild>
-                <Link href={`/entities/${id}/assets`}>Add references</Link>
+              <Button
+                nativeButton={false}
+                render={<Link href={`/entities/${id}/assets`} />}
+              >
+                Add references
               </Button>
             </EmptyContent>
           </Empty>

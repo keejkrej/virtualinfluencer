@@ -1,6 +1,5 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import {
   Collapsible,
   CollapsibleContent,
@@ -26,6 +25,34 @@ import {
 import { Streamdown } from "streamdown";
 
 import { Shimmer } from "./shimmer";
+
+function useControllableState<T>({
+  prop,
+  defaultProp,
+  onChange,
+}: {
+  prop?: T;
+  defaultProp: T;
+  onChange?: (value: T) => void;
+}): [T, (next: T | ((prev: T) => T)) => void] {
+  const [uncontrolled, setUncontrolled] = useState(defaultProp);
+  const isControlled = prop !== undefined;
+  const value = isControlled ? prop : uncontrolled;
+
+  const setValue = useCallback(
+    (next: T | ((prev: T) => T)) => {
+      const resolved =
+        typeof next === "function" ? (next as (prev: T) => T)(value) : next;
+      if (!isControlled) {
+        setUncontrolled(resolved);
+      }
+      onChange?.(resolved);
+    },
+    [isControlled, onChange, value],
+  );
+
+  return [value, setValue];
+}
 
 interface ReasoningContextValue {
   isStreaming: boolean;
@@ -211,7 +238,7 @@ export const ReasoningContent = memo(
     <CollapsibleContent
       className={cn(
         "mt-4 text-sm",
-        "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-muted-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "data-closed:fade-out-0 data-closed:slide-out-to-top-2 data-open:slide-in-from-top-2 text-muted-foreground outline-none data-closed:animate-out data-open:animate-in",
         className
       )}
       {...props}

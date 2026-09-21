@@ -33,7 +33,7 @@ Open [http://localhost:3000](http://localhost:3000). A demo entity **Lumen Park*
 ## Stack
 
 - **Next.js App Router** + TypeScript
-- **shadcn/ui Lyra** (`components.json` style `radix-lyra`, Phosphor icons, JetBrains Mono)
+- **shadcn/ui Lyra** (`components.json` style `base-lyra`, Base UI primitives, Phosphor icons, JetBrains Mono)
 - **AI Elements** + **Vercel AI SDK** (`ai`, `@ai-sdk/react`) for chat, tools, streaming, still generation UI
 - **OpenRouter** via `@openrouter/ai-sdk-provider` (text) and the Image API (stills + reference images)
 - **Prisma ORM 7** — SQLite locally, Neon Postgres on Vercel
